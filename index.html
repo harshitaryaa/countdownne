@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to Ankita's Birthday</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8f0 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .dancing-font {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .heart {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background-color: #ff6b8b;
+            transform: rotate(45deg);
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #ff6b8b;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: rotate(45deg) scale(1); }
+            25% { transform: rotate(45deg) scale(1.1); }
+            50% { transform: rotate(45deg) scale(1); }
+            75% { transform: rotate(45deg) scale(1.2); }
+            100% { transform: rotate(45deg) scale(1); }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes float-up {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+.food-card {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    animation: float-up 3s ease-in-out infinite;
+}
+
+@keyframes food-anim {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.05) rotate(2deg); }
+    50% { transform: scale(1) rotate(-1deg); }
+    75% { transform: scale(1.05) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .button-heart {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .button-heart:hover {
+            transform: scale(1.05);
+        }
+        
+        .button-heart::after {
+            content: '❤️';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: all 0.5s;
+        }
+        
+        .button-heart:hover::after {
+            top: -10px;
+            opacity: 1;
+        }
+        
+        .birthday-card {
+            perspective: 1000px;
+        }
+        
+        .birthday-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .birthday-card:hover .birthday-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .birthday-card-front, .birthday-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(255, 105, 140, 0.3);
+        }
+        
+        .birthday-card-back {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .message-bubble {
+            position: relative;
+            background: #fff;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+        }
+        
+        .message-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 30px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #fff transparent;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            animation: confetti 5s linear infinite;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center py-12 px-4">
+    <div class="absolute w-full h-full overflow-hidden pointer-events-none">
+        <!-- Confetti container -->
+    </div>
+    
+    <div class="text-center mb-8">
+        <h1 class="text-4xl md:text-6xl font-bold text-pink-600 dancing-font mb-2">Ankita Bhatt</h1>
+        <div class="flex justify-center items-center gap-2">
+            <h2 class="text-xl md:text-3xl text-gray-800">Your Birthday Countdown</h2>
+            <div class="heart"></div>
+        </div>
+    </div>
+    
+    <div class="flex flex-col lg:flex-row items-center justify-center gap-8 w-full max-w-6xl px-4">
+        <!-- Countdown Section -->
+        <div class="birthday-card w-full max-w-md h-64 bg-white rounded-xl shadow-xl">
+            <div class="birthday-card-inner">
+                <div class="birthday-card-front flex flex-col justify-center items-center bg-gradient-to-br from-pink-100 to-pink-200 p-6 rounded-xl">
+                    <h3 class="text-2xl font-bold text-pink-700 mb-4">Countdown to Your Special Day</h3>
+                    <div class="flex justify-center gap-4">
+                        <div class="flex flex-col items-center">
+                            <span id="days" class="text-4xl font-bold text-pink-600">00</span>
+                            <span class="text-sm text-gray-600">Days</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span id="hours" class="text-4xl font-bold text-pink-600">00</span>
+                            <span class="text-sm text-gray-600">Hours</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span id="minutes" class="text-4xl font-bold text-pink-600">00</span>
+                            <span class="text-sm text-gray-600">Minutes</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span id="seconds" class="text-4xl font-bold text-pink-600">00</span>
+                            <span class="text-sm text-gray-600">Seconds</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-pink-800">August 4th, 2025</p>
+                </div>
+                <div class="birthday-card-back">
+                    <p class="text-white text-lg mb-4">Every moment without you feels like forever...</p>
+                    <p class="text-white text-lg">But this countdown brings me closer to seeing you shine on your special day!</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ankita's Photo Section -->
+        <div class="w-full max-w-md h-64 relative overflow-hidden rounded-xl shadow-xl bg-white flex justify-center items-center">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/85897889-cc5a-4bee-9d66-f920cee10d3d.png" alt="Ankita Bhatt smiling with her beautiful eyes sparkling under soft lighting, wearing elegant jewelry that complements her radiant beauty" class="absolute w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-pink-900/40 via-transparent to-transparent flex flex-col justify-end p-6">
+                <h3 class="text-white text-xl font-bold mb-1">Ankita's Radiance</h3>
+                <p class="text-pink-100 text-sm">Your beauty illuminates my world</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Why I Love You Section -->
+    <div class="w-full max-w-3xl mt-12 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-center text-pink-700 mb-6 dancing-font">Reasons Why Ankita is Amazing</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Reason 1 -->
+            <div class="message-bubble">
+                <h4 class="font-bold text-pink-700 mb-2">Your Mesmerizing Eyes</h4>
+                <p class="text-gray-700">When I look into your eyes, I see entire galaxies of kindness, love, and warmth that make me fall deeper in love with you every day.</p>
+            </div>
+            
+            <!-- Reason 2 -->
+            <div class="message-bubble">
+                <h4 class="font-bold text-pink-700 mb-2">Your Beautiful Heart</h4>
+                <p class="text-gray-700">The way you care for everyone around you shows the incredible love and compassion that fills your heart.</p>
+            </div>
+            
+            <!-- Reason 3 -->
+            <div class="message-bubble">
+                <h4 class="font-bold text-pink-700 mb-2">Your Infectious Laughter</h4>
+                <p class="text-gray-700">The way you laugh makes my heart skip a beat. It's the most beautiful sound in the world.</p>
+            </div>
+            
+            <!-- Reason 4 -->
+            <div class="message-bubble">
+                <h4 class="font-bold text-pink-700 mb-2">Your Strength</h4>
+                <p class="text-gray-700">You face challenges with such courage and grace. Your strength inspires me every day.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Birthday Food Selection -->
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 my-8 relative overflow-hidden">
+        <h2 class="text-2xl font-bold text-center text-pink-700 mb-6 dancing-font">Pick Your Birthday Feast!</h2>
+        <div class="flex flex-col space-y-4">
+            <div class="food-card floating bg-pink-100 p-4 rounded-lg cursor-pointer transform hover:scale-105 transition-all duration-300" onclick="showConfetti()">
+                <h3 class="text-lg font-semibold text-pink-700">🥘 Chole Bhature</h3>
+                <p class="text-gray-600">Spicy chickpeas with fluffy fried bread</p>
+            </div>
+            <div class="food-card floating bg-pink-50 p-4 rounded-lg cursor-pointer transform hover:scale-105 transition-all duration-300" onclick="showConfetti()">
+                <h3 class="text-lg font-semibold text-purple-700">🍜 Chow Mein</h3>
+                <p class="text-gray-600">Your favorite savory noodles</p>
+            </div>
+            <div class="food-card floating bg-pink-100 p-4 rounded-lg cursor-pointer transform hover:scale-105 transition-all duration-300" onclick="showConfetti()">
+                <h3 class="text-lg font-semibold text-blue-700">🍰 Birthday Cake</h3>
+                <p class="text-gray-600">Custom-made delicious cake</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interactive Button -->
+    <button id="birthdayButton" class="button-heart px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-lg font-bold mt-4 mb-12 transition-all duration-300">
+        🎉 Click for Birthday Surprise!
+    </button>
+    
+    <!-- Popup Modal -->
+    <div id="birthdayPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+            <div class="text-pink-600 text-3xl mb-4">🎂</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Wait For Your Birthday!</h3>
+            <p class="text-gray-600 mb-6">The best surprises are worth waiting for!</p>
+            <button onclick="hidePopup()" class="px-6 py-2 bg-pink-500 text-white rounded-full">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-gray-500 text-sm mb-4">
+        <p>Created with love for Ankita Bhatt's Birthday</p>
+        <p>August 4th, 2025</p>
+    </div>
+    
+    <script>
+        // Countdown function
+        function updateCountdown() {
+            const birthday = new Date('August 4, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = birthday - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+            
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown').innerHTML = "<h2>Happy Birthday Ankita!</h2>";
+            }
+        }
+        
+        // Initial call and set interval
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // Birthday button interaction
+        const birthdayButton = document.getElementById('birthdayButton');
+        
+        function showConfetti() {
+            // Create celebration effect
+            for (let i = 0; i < 30; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'floating';
+                emoji.innerHTML = ['🎊','🎈','🎂','✨','🎁','🥳'][Math.floor(Math.random()*6)];
+                emoji.style.position = 'absolute';
+                emoji.style.fontSize = '2rem';
+                emoji.style.left = Math.random() * 80 + 10 + 'vw';
+                emoji.style.top = Math.random() * 20 + 30 + 'vh';
+                emoji.style.zIndex = '100';
+                
+                document.body.appendChild(emoji);
+                
+                setTimeout(() => {
+                    emoji.remove();
+                }, 3000);
+            }
+        }
+        const confettiContainer = document.querySelector('.absolute.w-full.h-full');
+        
+        loveButton.addEventListener('click', function() {
+            // Create confetti
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 60 + 330}, 100%, 50%)`;
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                
+                confettiContainer.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            // Show floating hearts
+            const heartMessages = [
+                "You're beautiful!",
+                "I adore your eyes!",
+                "Your smile melts my heart",
+                "You're my everything!",
+                "My love for you grows daily",
+                "You're perfect in every way!"
+            ];
+            
+            const randomMessage = heartMessages[Math.floor(Math.random() * heartMessages.length)];
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble floating absolute bottom-24 left-1/2 transform -translate-x-1/2';
+            bubble.textContent = randomMessage;
+            bubble.style.zIndex = '100';
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => {
+                bubble.remove();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
+
