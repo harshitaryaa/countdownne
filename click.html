@@ -24,43 +24,27 @@
 
         .dancing-font {
             font-family: 'Dancing Script', cursive;
-            font-size: 3rem; /* Adjusted for better mobile view */
-            animation: move 5s ease-in-out infinite, scale 1.5s ease-in-out infinite alternate;
+            font-size: 2.5rem; /* Adjusted for better mobile view */
             text-shadow: 2px 2px 10px rgba(255, 105, 140, 0.7);
             color: #ff4081;
-        }
-
-        @keyframes move {
-            0% {
-                transform: translateX(-100%);
-            }
-            50% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        @keyframes scale {
-            0% {
-                transform: scale(1);
-            }
-            100% {
-                transform: scale(1.1);
-            }
         }
 
         .button {
             background-color: #ff6b8b;
             color: white;
-            padding: 10px 20px; /* Adjusted padding for better mobile view */
+            padding: 15px 20px; /* Adjusted padding for better mobile view */
             border-radius: 25px;
             margin: 10px; /* Adjusted margin for better spacing */
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
             font-size: 1rem; /* Adjusted font size for better mobile view */
             box-shadow: 0 4px 15px rgba(255, 105, 140, 0.5);
+            width: 90%; /* Full width on mobile */
+            max-width: 300px; /* Max width for larger screens */
+            text-align: center; /* Center text */
+            opacity: 0; /* Start hidden for animation */
+            transform: translateY(20px); /* Start slightly lower for animation */
+            animation: fadeInUp 0.5s forwards; /* Animation for appearance */
         }
 
         .button:hover {
@@ -69,31 +53,44 @@
         }
 
         .timer {
-            font-size: 1.2rem; /* Adjusted font size for better mobile view */
+            font-size: 1rem; /* Adjusted font size for better mobile view */
             margin-top: 5px; /* Adjusted margin for better spacing */
             color: #ff4081;
         }
 
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            opacity: 0;
-            animation: confetti 5s linear infinite;
+        .countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
         }
 
-        @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dancing-font {
+                font-size: 2rem; /* Smaller font size for mobile */
+            }
+            .button {
+                font-size: 0.9rem; /* Smaller button text for mobile */
+            }
         }
     </style>
 </head>
 <body>
     <h1 class="dancing-font">Happy Birthday Ankita Bhatt!</h1>
     <div class="text-center mt-4">
-        <h2 class="text-2xl md:text-3xl font-bold text-pink-600">Countdown to Your Special Day</h2>
-        <div class="flex flex-col items-center mt-4">
+        <h2 class="text-xl md:text-2xl font-bold text-pink-600">Countdown to Your Special Day</h2>
+        <div class="countdown-container">
             <!-- Buttons for each day leading up to the birthday -->
             <div id="countdownButtons"></div>
         </div>
@@ -101,17 +98,28 @@
 
     <script>
         const birthdayDate = new Date('August 4, 2025');
-        const today = new Date();
         const oneWeekBefore = new Date(birthdayDate);
         oneWeekBefore.setDate(birthdayDate.getDate() - 7);
 
         // Create buttons for each day from one week before to the birthday
+        const messages = [
+            "Get Excited! Only 7 Days Left!",
+            "6 Days Until the Celebration!",
+            "5 Days to Go!",
+            "4 Days Remaining!",
+            "3 Days Until Your Special Day!",
+            "2 Days to Celebrate!",
+            "Tomorrow is the Big Day!",
+            "Happy Birthday, Ankita!"
+        ];
+
         for (let i = 0; i < 8; i++) {
             const buttonDate = new Date(oneWeekBefore);
             buttonDate.setDate(oneWeekBefore.getDate() + i);
             const button = document.createElement('div');
             button.className = 'button';
-            button.innerText = `Open Day ${i + 1} - ${buttonDate.toDateString()}`;
+            button.innerText = messages[i]; // Use the new messages
+            button.style.animationDelay = `${i * 0.2}s`; // Staggered animation
             button.onclick = () => {
                 alert(`You opened Day ${i + 1}!`);
                 // Here you can redirect to a specific page for each day
