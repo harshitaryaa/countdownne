@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Cards</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffebee 0%, #f8bbd0 100%);
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px; /* Added padding for mobile */
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #ff4081;
+            font-size: 2.5rem; /* Responsive font size */
+            text-align: center;
+            animation: fadeIn 1s ease-in-out; /* Animation for heading */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .scratch-card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjusted for smaller screens */
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            animation: slideIn 1s ease-in-out; /* Animation for card container */
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .scratch-card {
+            position: relative;
+            width: 250px; /* Set width for square shape */
+            height: 250px; /* Set height for square shape */
+            background-color: #ff6b8b; /* Original color */
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(255, 105, 140, 0.5);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 5px solid #ff4081; /* Border for decoration */
+        }
+
+        .scratch-card:hover {
+            transform: scale(1.05);
+        }
+
+        .scratch-card canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            width: 100%; /* Make canvas responsive */
+            height: 100%; /* Make canvas responsive */
+        }
+
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .confetti div {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff4081;
+            opacity: 0.8;
+            animation: fall 3s infinite;
+            border-radius: 50%; /* Make confetti round */
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday!</h1>
+    <div class="confetti">
+        <!-- Party popper confetti elements -->
+        <div style="left: 10%; animation-delay: 0s; background-color: #ff4081;"></div>
+        <div style="left: 20%; animation-delay: 0.5s; background-color: #ffeb3b;"></div>
+        <div style="left: 30%; animation-delay: 1s; background-color: #4caf50;"></div>
+        <div style="left: 40%; animation-delay: 1.5s; background-color: #2196f3;"></div>
+        <div style="left: 50%; animation-delay: 2s; background-color: #ff4081;"></div>
+        <div style="left: 60%; animation-delay: 0.5s; background-color: #ffeb3b;"></div>
+        <div style="left: 70%; animation-delay: 1s; background-color: #4caf50;"></div>
+        <div style="left: 80%; animation-delay: 1.5s; background-color: #2196f3;"></div>
+        <div style="left: 90%; animation-delay: 2s; background-color: #ff4081;"></div>
+    </div>
+    <div class="scratch-card-container">
+        <div class="scratch-card" data-message="Happy Birthday, Ankita! 🎉">
+            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        </div>
+        <div class="scratch-card" data-message="Enjoy Your Special Day! 🎈">
+            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        </div>
+        <div class="scratch-card" data-message="Wishing You All the Best! 🎁">
+            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const scratchCards = document.querySelectorAll('.scratch-card');
+
+        scratchCards.forEach(card => {
+            const canvas = card.querySelector('.scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const message = card.getAttribute('data-message');
+
+            // Create a pattern for the scratch area
+            const patternCanvas = document.createElement('canvas');
+            const patternCtx = patternCanvas.getContext('2d');
+            patternCanvas.width = 10;
+            patternCanvas.height = 10;
+
+            // Draw a pattern (diagonal lines)
+            patternCtx.strokeStyle = '#ff4081'; // Color of the pattern
+            patternCtx.lineWidth = 2;
+            patternCtx.beginPath();
+            patternCtx.moveTo(0, 10);
+            patternCtx.lineTo(10, 0);
+            patternCtx.moveTo(10, 10);
+            patternCtx.lineTo(0, 0);
+            patternCtx.stroke();
+
+            const pattern = ctx.createPattern(patternCanvas, 'repeat');
+
+            // Fill the canvas with the pattern
+            ctx.fillStyle = pattern;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add event listeners for scratching
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', startScratch);
+            canvas.addEventListener('mouseup', endScratch);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', startScratch);
+            canvas.addEventListener('touchend', endScratch);
+            canvas.addEventListener('touchmove', scratch);
+
+            function startScratch(e) {
+                isDrawing = true;
+                scratch(e);
+            }
+
+            function endScratch() {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+
+            function scratch(e) {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+
+                // Check if the canvas is scratched enough to reveal the message
+                if (ctx.getImageData(0, 0, canvas.width, canvas.height).data.filter(value => value === 0).length > 10000) {
+                    revealMessage(message);
+                }
+            }
+
+            function revealMessage(message) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'black';
+                ctx.font = '20px Poppins';
+                ctx.textAlign = 'center';
+                ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+            }
+        });
+    </script>
+</body>
+</html>
