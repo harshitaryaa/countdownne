@@ -98,6 +98,7 @@
 
     <script>
         const birthdayDate = new Date('August 4, 2025');
+        localStorage.setItem('countdownTarget', birthdayDate.getTime());
         const oneWeekBefore = new Date(birthdayDate);
         oneWeekBefore.setDate(birthdayDate.getDate() - 7);
 
@@ -121,10 +122,9 @@
             button.innerText = messages[i]; // Use the new messages
             button.style.animationDelay = `${i * 0.2}s`; // Staggered animation
             button.onclick = () => {
-                alert(`open when time is 00`);
-                // Here you can redirect to a specific page for each day
-                // window.location.href = `day${i + 1}.html`; // Uncomment and create day pages
-            };
+    window.location.href = `day${i + 1}.html`;
+};
+
 
             // Create a timer for each button
             const timer = document.createElement('div');
