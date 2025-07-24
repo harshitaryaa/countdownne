@@ -174,15 +174,17 @@
             h1 {
                 font-size: 2rem;
             }
-
             .timer {
                 font-size: 1.5rem;
             }
-
+            .scratch-card-container {
+                flex-direction: column;
+                align-items: center;
+            }
             .scratch-card {
                 height: 200px;
+                width: 80%;
             }
-
             .message {
                 font-size: 1.2rem;
             }
@@ -190,7 +192,7 @@
     </style>
 </head>
 <body>
-    <h1>Happy Birthday!</h1>
+    <h1>Happy Birthday Ankita!</h1>
     <div class="confetti">
         <div style="left: 10%; animation-delay: 0s; background-color: #ff4081;"></div>
         <div style="left: 20%; animation-delay: 0.5s; background-color: #ffeb3b;"></div>
@@ -212,14 +214,14 @@
     </div>
 
     <div class="scratch-card-container">
-        <div class="scratch-card" data-message="Happy Birthday!\nAnkita! 🎉🎂">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message="better luck next time🎉🎂">
+            <canvas class="scratchCanvas"></canvas>
         </div>
-        <div class="scratch-card" data-message="Enjoy Your Special Day! 🎈">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message=" Earings ! 🎈">
+            <canvas class="scratchCanvas"></canvas>
         </div>
-        <div class="scratch-card" data-message="Wishing You All the Best! 🎁">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message="wait for next day😂! 🎁">
+            <canvas class="scratchCanvas"></canvas>
         </div>
     </div>
 
@@ -245,19 +247,22 @@
         const pickOneModal = document.getElementById('pickOneModal');
         const confirmPickBtn = document.getElementById('confirmPickBtn');
         let countdown;
+        let selectedCard = null;
 
-        // Set countdown to July 28 2025
         const targetDate = new Date('2025-08-02T00:00:00');
-        const now = new Date();
-        const remainingSeconds = Math.floor((targetDate - now) / 1000);
         
-        if (remainingSeconds > 0) {
-            startTimer(remainingSeconds);
-            timerDisplay.textContent = formatTime(remainingSeconds);
-        } else {
-            revealScratchCards();
+        // Timer logic remains unchanged
+        function updateTimer() {
+            const now = new Date();
+            const remainingSeconds = Math.floor((targetDate - now) / 1000);
+            if (remainingSeconds > 0) {
+                if (!countdown) startTimer(remainingSeconds);
+                timerDisplay.textContent = formatTime(remainingSeconds);
+            } else {
+                revealScratchCards();
+                if (countdown) clearInterval(countdown);
+            }
         }
-
         function formatTime(seconds) {
             const days = Math.floor(seconds / (24 * 3600));
             seconds %= 24 * 3600;
@@ -265,28 +270,34 @@
             seconds %= 3600;
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
-            
             return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
         }
-
         function startTimer(totalSeconds) {
-            countdown = setInterval(function () {
+            countdown = setInterval(() => {
+                totalSeconds--;
                 if (totalSeconds <= 0) {
                     clearInterval(countdown);
                     revealScratchCards();
                 } else {
                     timerDisplay.textContent = formatTime(totalSeconds);
-                    totalSeconds--;
                 }
             }, 1000);
         }
+        updateTimer();
 
         function revealScratchCards() {
-            scratchCards.forEach(card => {
-                card.style.display = 'block';
-            });
             timerDisplay.style.display = 'none';
             openEarlyBtn.style.display = 'none';
+            passwordContainer.style.display = 'none';
+            
+            scratchCards.forEach(card => card.style.display = 'block');
+
+            // --- FIX START: Wait for the next browser paint before drawing ---
+            // This ensures the cards have dimensions before we try to access them.
+            requestAnimationFrame(() => {
+                scratchCards.forEach(setupInitialCanvas);
+            });
+            // --- FIX END ---
         }
 
         openEarlyBtn.addEventListener('click', () => {
@@ -295,23 +306,28 @@
 
         submitPasswordBtn.addEventListener('click', () => {
             if (passwordInput.value === password) {
+                if (countdown) clearInterval(countdown);
                 revealScratchCards();
-                passwordContainer.style.display = 'none';
             } else {
                 alert('Incorrect password. Please try again.');
             }
         });
 
-        scratchCards.forEach(card => {
+        function setupInitialCanvas(card) {
             const canvas = card.querySelector('.scratchCanvas');
             const ctx = canvas.getContext('2d');
-            const message = card.getAttribute('data-message');
+            const rect = canvas.getBoundingClientRect();
+            
+            // Set canvas resolution to its actual size on the page
+            canvas.width = rect.width;
+            canvas.height = rect.height;
 
+            // Draw the scratchable overlay
+            ctx.fillStyle = '#ff4081'; // Fallback color
             const patternCanvas = document.createElement('canvas');
             const patternCtx = patternCanvas.getContext('2d');
             patternCanvas.width = 10;
             patternCanvas.height = 10;
-
             patternCtx.strokeStyle = '#ff4081';
             patternCtx.lineWidth = 2;
             patternCtx.beginPath();
@@ -320,126 +336,123 @@
             patternCtx.moveTo(10, 10);
             patternCtx.lineTo(0, 0);
             patternCtx.stroke();
-
             const pattern = ctx.createPattern(patternCanvas, 'repeat');
             ctx.fillStyle = pattern;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
+        scratchCards.forEach(card => {
+            const canvas = card.querySelector('.scratchCanvas');
             let isDrawing = false;
-
-            canvas.addEventListener('mousedown', startScratch);
-            canvas.addEventListener('mouseup', endScratch);
-            canvas.addEventListener('mousemove', scratch);
-            canvas.addEventListener('touchstart', startScratch);
-            canvas.addEventListener('touchend', endScratch);
-            canvas.addEventListener('touchmove', scratch);
-
-            let selectedCard = null;
             
+            function getPointerPosition(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
             function startScratch(e) {
                 e.preventDefault();
-                
                 if (!selectedCard) {
-                    // First touch - show modal
                     showModal();
                     selectedCard = card;
                     return;
                 }
-                
                 if (card === selectedCard) {
                     isDrawing = true;
                     scratch(e);
                 }
             }
 
-            function endScratch() {
+            function endScratch(e) {
+                if (!isDrawing) return;
                 isDrawing = false;
-                ctx.beginPath();
+                canvas.getContext('2d').beginPath();
+                checkForReveal(card);
             }
 
             function scratch(e) {
                 if (!isDrawing) return;
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-
+                const ctx = canvas.getContext('2d');
+                const pos = getPointerPosition(e);
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.globalCompositeOperation = 'source-over';
-
-                const scratchedArea = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const scratchedPixels = scratchedArea.data.filter(value => value === 0).length;
-
-                if (scratchedPixels > 10000) {
-                    revealMessage(message);
-                }
             }
-
-            function revealMessage(message) {
-                // Hide other cards
-                scratchCards.forEach(c => {
-                    if (c !== card) {
-                        c.style.display = 'none';
-                    }
-                });
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Improved text styling and positioning
-                ctx.fillStyle = '#ff4081';
-                ctx.font = 'bold 26px Poppins';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // Calculate text position
-                const lines = message.split('\n');
-                const lineHeight = 32;
-                const verticalSpacing = 10;
-                const totalHeight = (lines.length * lineHeight) + ((lines.length - 1) * verticalSpacing);
-                const startY = (canvas.height - totalHeight) / 2 + lineHeight / 2;
-
-                // Draw each line with better spacing
-                lines.forEach((line, i) => {
-                    ctx.fillText(
-                        line.trim(), 
-                        canvas.width / 2, 
-                        startY + (i * (lineHeight + verticalSpacing))
-                    );
-                });
-                messageDisplay.textContent = message;
-                messageDisplay.style.display = 'block';
-            }
+            
+            canvas.addEventListener('mousedown', startScratch);
+            canvas.addEventListener('mouseup', endScratch);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', startScratch, { passive: false });
+            canvas.addEventListener('touchend', endScratch);
+            canvas.addEventListener('touchmove', scratch, { passive: false });
         });
 
-        // Show modal function
-        function showModal() {
-            pickOneModal.classList.add('active');
-            setTimeout(() => {
-                pickOneModal.style.display = 'flex';
-            }, 50);
+        function checkForReveal(card) {
+            const canvas = card.querySelector('.scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] === 0) transparentPixels++;
+            }
+            if ((transparentPixels / (canvas.width * canvas.height)) > 0.6) {
+                revealMessage(card);
+            }
+        }
+        
+        function revealMessage(card) {
+            scratchCards.forEach(c => {
+                if (c !== card) c.style.display = 'none';
+            });
+            
+            const canvas = card.querySelector('.scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Ensure canvas is correctly sized before drawing the final message
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const message = card.getAttribute('data-message');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ff6b8b'; // Background color of revealed card
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const lines = message.split('\n');
+            const fontSize = Math.min(canvas.height / 5, canvas.width / 11);
+            ctx.font = `bold ${fontSize}px Poppins`;
+            const lineHeight = fontSize * 1.2;
+            const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, i) => {
+                ctx.fillText(line.trim(), canvas.width / 2, startY + (i * lineHeight));
+            });
+
+            messageDisplay.textContent = message.replace('\n', ' ');
+            messageDisplay.style.display = 'block';
         }
 
-        // Confirm pick button functionality
+        function showModal() {
+            pickOneModal.style.opacity = '1';
+            pickOneModal.style.pointerEvents = 'all';
+            pickOneModal.classList.add('active');
+            pickOneModal.querySelector('.modal-content').classList.add('active');
+        }
+
         confirmPickBtn.addEventListener('click', () => {
+            pickOneModal.style.opacity = '0';
+            pickOneModal.style.pointerEvents = 'none';
             pickOneModal.classList.remove('active');
-            
-            // Animate cards appearing
-            scratchCards.forEach(card => {
-                card.style.opacity = 0;
-                card.style.display = 'block';
-                card.style.transform = 'translateY(20px)';
-                
-                // Animate in
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease-out';
-                    card.style.opacity = 1;
-                    card.style.transform = 'translateY(0)';
-                }, 100);
-            });
+            pickOneModal.querySelector('.modal-content').classList.remove('active');
         });
     </script>
 </body>
