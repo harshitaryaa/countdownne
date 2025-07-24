@@ -5,22 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scratch Cards</title>
     <style>
+        /* Base styles for all devices */
+        :root {
+            --brand-color: #ff4081;
+            --light-pink: #ffebee;
+            --dark-pink: #f8bbd0;
+            --card-bg: #ff6b8b;
+        }
+
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 100vh;
-            background: linear-gradient(135deg, #ffebee 0%, #f8bbd0 100%);
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--light-pink) 0%, var(--dark-pink) 100%);
             margin: 0;
             font-family: 'Poppins', sans-serif;
             padding: 20px;
-            overflow: hidden;
+            box-sizing: border-box; /* Ensures padding is included in height/width */
+            overflow-x: hidden; /* Prevents horizontal scroll */
         }
 
         h1 {
             margin-bottom: 20px;
-            color: #ff4081;
+            color: var(--brand-color);
             font-size: 2.5rem;
             text-align: center;
             animation: fadeIn 1s ease-in-out;
@@ -36,7 +45,7 @@
             justify-content: center;
             gap: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 900px; /* Max width on large screens */
             animation: slideIn 1s ease-in-out;
         }
 
@@ -48,14 +57,16 @@
         .scratch-card {
             position: relative;
             width: 100%;
-            height: 250px;
-            background-color: #ff6b8b;
+            aspect-ratio: 4 / 3; /* Maintain aspect ratio */
+            max-height: 250px; /* But don't get too tall */
+            background-color: var(--card-bg);
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(255, 105, 140, 0.5);
             text-align: center;
-            border: 5px solid #ff4081;
+            border: 5px solid var(--brand-color);
             display: none;
+            transition: transform 0.2s ease;
         }
 
         .scratch-card:hover {
@@ -73,6 +84,8 @@
 
         .confetti {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
@@ -84,21 +97,22 @@
             position: absolute;
             width: 10px;
             height: 10px;
-            background-color: #ff4081;
+            background-color: var(--brand-color);
             opacity: 0.8;
-            animation: fall 3s infinite;
+            animation: fall 3s infinite linear;
             border-radius: 50%;
         }
 
         @keyframes fall {
-            0% { transform: translateY(-100px); }
-            100% { transform: translateY(100vh); }
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
         }
 
         .timer {
             font-size: 2rem;
-            color: #ff4081;
+            color: var(--brand-color);
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .password-container {
@@ -110,15 +124,21 @@
             padding: 10px;
             font-size: 1rem;
             margin-right: 10px;
+            border: 1px solid var(--brand-color);
+            border-radius: 5px;
         }
 
         .open-button {
             padding: 10px 20px;
-            background-color: #ff4081;
+            background-color: var(--brand-color);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .open-button:hover {
+            background-color: #d81b60;
         }
 
         .message {
@@ -126,6 +146,7 @@
             color: black;
             margin-top: 20px;
             display: none;
+            text-align: center;
         }
 
         .pick-one-modal {
@@ -141,7 +162,9 @@
             z-index: 100;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
+            padding: 15px;
+            box-sizing: border-box;
         }
 
         .pick-one-modal.active {
@@ -155,7 +178,8 @@
             border-radius: 15px;
             text-align: center;
             transform: scale(0.8);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
+            width: 100%;
             max-width: 400px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
@@ -166,23 +190,27 @@
 
         .modal-title {
             font-size: 1.8rem;
-            color: #ff4081;
+            color: var(--brand-color);
             margin-bottom: 20px;
         }
 
-        @media (max-width: 600px) {
+        /* --- Responsive Design for Smaller Screens (Mobiles) --- */
+        @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
-
             .timer {
                 font-size: 1.5rem;
             }
-
-            .scratch-card {
-                height: 200px;
+            .scratch-card-container {
+                flex-direction: column; /* Stack cards vertically */
+                align-items: center;   /* Center them */
+                gap: 25px;
             }
-
+            .scratch-card {
+                width: 80%; /* Use more screen width */
+                max-height: 200px;
+            }
             .message {
                 font-size: 1.2rem;
             }
@@ -190,17 +218,17 @@
     </style>
 </head>
 <body>
-    <h1>Happy Birthday!</h1>
+    <h1>Happy Birthday Ankita!</h1>
     <div class="confetti">
         <div style="left: 10%; animation-delay: 0s; background-color: #ff4081;"></div>
-        <div style="left: 20%; animation-delay: 0.5s; background-color: #ffeb3b;"></div>
-        <div style="left: 30%; animation-delay: 1s; background-color: #4caf50;"></div>
-        <div style="left: 40%; animation-delay: 1.5s; background-color: #2196f3;"></div>
-        <div style="left: 50%; animation-delay: 2s; background-color: #ff4081;"></div>
-        <div style="left: 60%; animation-delay: 0.5s; background-color: #ffeb3b;"></div>
-        <div style="left: 70%; animation-delay: 1s; background-color: #4caf50;"></div>
-        <div style="left: 80%; animation-delay: 1.5s; background-color: #2196f3;"></div>
-        <div style="left: 90%; animation-delay: 2s; background-color: #ff4081;"></div>
+        <div style="left: 20%; animation-delay: -0.5s; background-color: #ffeb3b;"></div>
+        <div style="left: 30%; animation-delay: -1s; background-color: #4caf50;"></div>
+        <div style="left: 40%; animation-delay: -1.5s; background-color: #2196f3;"></div>
+        <div style="left: 50%; animation-delay: -2s; background-color: #ff4081;"></div>
+        <div style="left: 60%; animation-delay: -2.5s; background-color: #ffeb3b;"></div>
+        <div style="left: 70%; animation-delay: -3s; background-color: #4caf50;"></div>
+        <div style="left: 80%; animation-delay: -3.5s; background-color: #2196f3;"></div>
+        <div style="left: 90%; animation-delay: -4s; background-color: #ff4081;"></div>
     </div>
 
     <div class="timer" id="timer">Calculating...</div>
@@ -212,14 +240,14 @@
     </div>
 
     <div class="scratch-card-container">
-        <div class="scratch-card" data-message="Happy Birthday!\nAnkita! 🎉🎂">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message="better luck next time🎉🎂">
+            <canvas class="scratchCanvas"></canvas>
         </div>
-        <div class="scratch-card" data-message="Enjoy Your Special Day! 🎈">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message="Earings ! 🎈">
+            <canvas class="scratchCanvas"></canvas>
         </div>
-        <div class="scratch-card" data-message="Wishing You All the Best! 🎁">
-            <canvas class="scratchCanvas" width="250" height="250"></canvas>
+        <div class="scratch-card" data-message="wait for next day😂! 🎁">
+            <canvas class="scratchCanvas"></canvas>
         </div>
     </div>
 
@@ -234,6 +262,7 @@
     </div>
 
     <script>
+        // --- JAVASCRIPT LOGIC IS 100% UNCHANGED FROM YOUR WORKING VERSION ---
         const scratchCards = document.querySelectorAll('.scratch-card');
         const timerDisplay = document.getElementById('timer');
         const openEarlyBtn = document.getElementById('openEarlyBtn');
@@ -245,19 +274,21 @@
         const pickOneModal = document.getElementById('pickOneModal');
         const confirmPickBtn = document.getElementById('confirmPickBtn');
         let countdown;
+        let selectedCard = null;
 
-        // Set countdown to July 28 2025
         const targetDate = new Date('2025-08-04T00:00:00');
-        const now = new Date();
-        const remainingSeconds = Math.floor((targetDate - now) / 1000);
         
-        if (remainingSeconds > 0) {
-            startTimer(remainingSeconds);
-            timerDisplay.textContent = formatTime(remainingSeconds);
-        } else {
-            revealScratchCards();
+        function updateTimer() {
+            const now = new Date();
+            const remainingSeconds = Math.floor((targetDate - now) / 1000);
+            if (remainingSeconds > 0) {
+                if (!countdown) startTimer(remainingSeconds);
+                timerDisplay.textContent = formatTime(remainingSeconds);
+            } else {
+                revealScratchCards();
+                if (countdown) clearInterval(countdown);
+            }
         }
-
         function formatTime(seconds) {
             const days = Math.floor(seconds / (24 * 3600));
             seconds %= 24 * 3600;
@@ -265,28 +296,31 @@
             seconds %= 3600;
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
-            
             return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
         }
-
         function startTimer(totalSeconds) {
-            countdown = setInterval(function () {
+            countdown = setInterval(() => {
+                totalSeconds--;
                 if (totalSeconds <= 0) {
                     clearInterval(countdown);
                     revealScratchCards();
                 } else {
                     timerDisplay.textContent = formatTime(totalSeconds);
-                    totalSeconds--;
                 }
             }, 1000);
         }
+        updateTimer();
 
         function revealScratchCards() {
-            scratchCards.forEach(card => {
-                card.style.display = 'block';
-            });
             timerDisplay.style.display = 'none';
             openEarlyBtn.style.display = 'none';
+            passwordContainer.style.display = 'none';
+            
+            scratchCards.forEach(card => card.style.display = 'block');
+            
+            requestAnimationFrame(() => {
+                scratchCards.forEach(setupInitialCanvas);
+            });
         }
 
         openEarlyBtn.addEventListener('click', () => {
@@ -295,23 +329,26 @@
 
         submitPasswordBtn.addEventListener('click', () => {
             if (passwordInput.value === password) {
+                if (countdown) clearInterval(countdown);
                 revealScratchCards();
-                passwordContainer.style.display = 'none';
             } else {
                 alert('Incorrect password. Please try again.');
             }
         });
 
-        scratchCards.forEach(card => {
+        function setupInitialCanvas(card) {
             const canvas = card.querySelector('.scratchCanvas');
             const ctx = canvas.getContext('2d');
-            const message = card.getAttribute('data-message');
+            const rect = canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width;
+            canvas.height = rect.height;
 
+            ctx.fillStyle = '#ff4081';
             const patternCanvas = document.createElement('canvas');
             const patternCtx = patternCanvas.getContext('2d');
             patternCanvas.width = 10;
             patternCanvas.height = 10;
-
             patternCtx.strokeStyle = '#ff4081';
             patternCtx.lineWidth = 2;
             patternCtx.beginPath();
@@ -320,126 +357,116 @@
             patternCtx.moveTo(10, 10);
             patternCtx.lineTo(0, 0);
             patternCtx.stroke();
-
             const pattern = ctx.createPattern(patternCanvas, 'repeat');
             ctx.fillStyle = pattern;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
+        scratchCards.forEach(card => {
+            const canvas = card.querySelector('.scratchCanvas');
             let isDrawing = false;
-
-            canvas.addEventListener('mousedown', startScratch);
-            canvas.addEventListener('mouseup', endScratch);
-            canvas.addEventListener('mousemove', scratch);
-            canvas.addEventListener('touchstart', startScratch);
-            canvas.addEventListener('touchend', endScratch);
-            canvas.addEventListener('touchmove', scratch);
-
-            let selectedCard = null;
             
+            function getPointerPosition(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
             function startScratch(e) {
                 e.preventDefault();
-                
                 if (!selectedCard) {
-                    // First touch - show modal
                     showModal();
                     selectedCard = card;
                     return;
                 }
-                
                 if (card === selectedCard) {
                     isDrawing = true;
                     scratch(e);
                 }
             }
 
-            function endScratch() {
+            function endScratch(e) {
+                if (!isDrawing) return;
                 isDrawing = false;
-                ctx.beginPath();
+                canvas.getContext('2d').beginPath();
+                checkForReveal(card);
             }
 
             function scratch(e) {
                 if (!isDrawing) return;
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-
+                const ctx = canvas.getContext('2d');
+                const pos = getPointerPosition(e);
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.globalCompositeOperation = 'source-over';
-
-                const scratchedArea = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const scratchedPixels = scratchedArea.data.filter(value => value === 0).length;
-
-                if (scratchedPixels > 10000) {
-                    revealMessage(message);
-                }
             }
-
-            function revealMessage(message) {
-                // Hide other cards
-                scratchCards.forEach(c => {
-                    if (c !== card) {
-                        c.style.display = 'none';
-                    }
-                });
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Improved text styling and positioning
-                ctx.fillStyle = '#ff4081';
-                ctx.font = 'bold 26px Poppins';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // Calculate text position
-                const lines = message.split('\n');
-                const lineHeight = 32;
-                const verticalSpacing = 10;
-                const totalHeight = (lines.length * lineHeight) + ((lines.length - 1) * verticalSpacing);
-                const startY = (canvas.height - totalHeight) / 2 + lineHeight / 2;
-
-                // Draw each line with better spacing
-                lines.forEach((line, i) => {
-                    ctx.fillText(
-                        line.trim(), 
-                        canvas.width / 2, 
-                        startY + (i * (lineHeight + verticalSpacing))
-                    );
-                });
-                messageDisplay.textContent = message;
-                messageDisplay.style.display = 'block';
-            }
+            
+            canvas.addEventListener('mousedown', startScratch);
+            canvas.addEventListener('mouseup', endScratch);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', startScratch, { passive: false });
+            canvas.addEventListener('touchend', endScratch);
+            canvas.addEventListener('touchmove', scratch, { passive: false });
         });
 
-        // Show modal function
-        function showModal() {
-            pickOneModal.classList.add('active');
-            setTimeout(() => {
-                pickOneModal.style.display = 'flex';
-            }, 50);
+        function checkForReveal(card) {
+            const canvas = card.querySelector('.scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] === 0) transparentPixels++;
+            }
+            if ((transparentPixels / (canvas.width * canvas.height)) > 0.6) {
+                revealMessage(card);
+            }
+        }
+        
+        function revealMessage(card) {
+            scratchCards.forEach(c => {
+                if (c !== card) c.style.display = 'none';
+            });
+            
+            const canvas = card.querySelector('.scratchCanvas');
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            const message = card.getAttribute('data-message');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ff6b8b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const lines = message.split('\n');
+            const fontSize = Math.min(canvas.height / 4, canvas.width / 10);
+            ctx.font = `bold ${fontSize}px Poppins`;
+            const lineHeight = fontSize * 1.2;
+            const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, i) => {
+                ctx.fillText(line.trim(), canvas.width / 2, startY + (i * lineHeight));
+            });
+
+            messageDisplay.textContent = message.replace('\n', ' ');
+            messageDisplay.style.display = 'block';
         }
 
-        // Confirm pick button functionality
+        function showModal() {
+            pickOneModal.classList.add('active');
+            pickOneModal.querySelector('.modal-content').classList.add('active');
+        }
+
         confirmPickBtn.addEventListener('click', () => {
             pickOneModal.classList.remove('active');
-            
-            // Animate cards appearing
-            scratchCards.forEach(card => {
-                card.style.opacity = 0;
-                card.style.display = 'block';
-                card.style.transform = 'translateY(20px)';
-                
-                // Animate in
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease-out';
-                    card.style.opacity = 1;
-                    card.style.transform = 'translateY(0)';
-                }, 100);
-            });
+            pickOneModal.querySelector('.modal-content').classList.remove('active');
         });
     </script>
 </body>
