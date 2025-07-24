@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Ankita Bhatt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffebee 0%, #f8bbd0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .dancing-font {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem; /* Adjusted for better mobile view */
+            text-shadow: 2px 2px 10px rgba(255, 105, 140, 0.7);
+            color: #ff4081;
+        }
+
+        .button {
+            background-color: #ff6b8b;
+            color: white;
+            padding: 15px 20px; /* Adjusted padding for better mobile view */
+            border-radius: 25px;
+            margin: 10px; /* Adjusted margin for better spacing */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 1rem; /* Adjusted font size for better mobile view */
+            box-shadow: 0 4px 15px rgba(255, 105, 140, 0.5);
+            width: 90%; /* Full width on mobile */
+            max-width: 300px; /* Max width for larger screens */
+            text-align: center; /* Center text */
+            opacity: 0; /* Start hidden for animation */
+            transform: translateY(20px); /* Start slightly lower for animation */
+            animation: fadeInUp 0.5s forwards; /* Animation for appearance */
+        }
+
+        .button:hover {
+            background-color: #ff4a6b;
+            transform: translateY(-3px);
+        }
+
+        .timer {
+            font-size: 1rem; /* Adjusted font size for better mobile view */
+            margin-top: 5px; /* Adjusted margin for better spacing */
+            color: #ff4081;
+        }
+
+        .countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dancing-font {
+                font-size: 2rem; /* Smaller font size for mobile */
+            }
+            .button {
+                font-size: 0.9rem; /* Smaller button text for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="dancing-font">Happy Birthday Ankita Bhatt!</h1>
+    <div class="text-center mt-4">
+        <h2 class="text-xl md:text-2xl font-bold text-pink-600">Countdown to Your Special Day</h2>
+        <div class="countdown-container">
+            <!-- Buttons for each day leading up to the birthday -->
+            <div id="countdownButtons"></div>
+        </div>
+    </div>
+
+    <script>
+        const birthdayDate = new Date('August 4, 2025');
+        localStorage.setItem('countdownTarget', birthdayDate.getTime());
+        const oneWeekBefore = new Date(birthdayDate);
+        oneWeekBefore.setDate(birthdayDate.getDate() - 7);
+
+        // Create buttons for each day from one week before to the birthday
+        const messages = [
+            "Get Excited! Only 7 Days Left!",
+            "6 Days Until the Celebration!",
+            "5 Days to Go!",
+            "4 Days Remaining!",
+            "3 Days Until Your Special Day!",
+            "2 Days to Celebrate!",
+            "Tomorrow is the Big Day!",
+            "Happy Birthday, Ankita!"
+        ];
+
+        for (let i = 0; i < 8; i++) {
+            const buttonDate = new Date(oneWeekBefore);
+            buttonDate.setDate(oneWeekBefore.getDate() + i);
+            const button = document.createElement('div');
+            button.className = 'button';
+            button.innerText = messages[i]; // Use the new messages
+            button.style.animationDelay = `${i * 0.2}s`; // Staggered animation
+            button.onclick = () => {
+    window.location.href = `day${i + 1}.html`;
+};
+
+
+            // Create a timer for each button
+            const timer = document.createElement('div');
+            timer.className = 'timer';
+            const countdown = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = buttonDate.getTime() - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (distance < 0) {
+                    clearInterval(countdown);
+                    timer.innerText = "Time's up!";
+                } else {
+                    timer.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+            }, 1000);
+
+            document.getElementById('countdownButtons').appendChild(button);
+            document.getElementById('countdownButtons').appendChild(timer);
+        }
+    </script>
+</body>
+</html>
