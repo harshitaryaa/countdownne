@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Ankita</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: black;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    #moon {
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle at 30% 30%, #fefcd7, #e0dcc0 40%, #aaa68c 70%, #6e6b5a 90%);
+      border-radius: 50%;
+      box-shadow: 0 0 80px 30px #fffdd055;
+      animation: moonGlow 8s infinite alternate;
+      background-blend-mode: multiply;
+    }
+
+    @keyframes moonGlow {
+      0% { box-shadow: 0 0 60px 20px #f5f3ce88; }
+      100% { box-shadow: 0 0 90px 35px #fffdd066; }
+    }
+
+   h1 {
+  margin-top: 100px;
+  font-size: clamp(1.5rem, 6vw, 2.8rem);
+  background: linear-gradient(90deg, #f5f3ce, #eae6a4, #f5f3ce);
+  
+  /* Compatibility */
+  background-clip: text;               /* Standard (not supported in all browsers) */
+  -webkit-background-clip: text;       /* For Chrome, Safari */
+  -webkit-text-fill-color: transparent;
+
+  animation: glowText 3s ease-in-out infinite alternate;
+  padding: 0 15px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+
+    @keyframes glowText {
+      from {
+        text-shadow: 0 0 10px #f5f3ce;
+      }
+      to {
+        text-shadow: 0 0 30px #fffdd0;
+      }
+    }
+
+    #timerDisplay {
+      font-size: 1.8rem;
+      margin-top: 20px;
+      color: #ffe;
+      text-shadow: 0 0 10px #fffae5;
+    }
+
+    #openButton {
+      margin: 30px auto;
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #f5f3ce;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff2b2;
+      transition: background 0.3s;
+      display: none;
+    }
+
+    #openButton:hover {
+      background-color: #fffdd0;
+    }
+
+    @media (max-width: 600px) {
+      #moon {
+        width: 100px;
+        height: 100px;
+        top: 4%;
+        right: 4%;
+      }
+
+      h1 {
+        margin-top: 80px;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        padding: 0 20px;
+      }
+
+      #timerDisplay {
+        font-size: 1.2rem;
+      }
+
+      #openButton {
+        padding: 12px 20px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+  <div id="moon"></div>
+
+  <h1>Happy Birthday Ankita </h1>
+  <div id="timerDisplay"></div>
+  <button id="openButton">Open Your Scratch Card</button>
+
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    let stars = [];
+    const starCount = 150;
+    let width, height;
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      stars = [];
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.2,
+          twinkle: Math.random()
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'white';
+      stars.forEach(star => {
+        ctx.globalAlpha = 0.5 + Math.sin(Date.now() * 0.002 + star.twinkle) * 0.5;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > height) {
+          star.y = 0;
+          star.x = Math.random() * width;
+        }
+      });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawStars();
+
+    // Timer logic
+    const targetDate = new Date('2025-07-2T00:00:00');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const openButton = document.getElementById('openButton');
+
+    function formatTime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${days}d ${hours}h ${minutes}m ${secs}s`;
+    }
+
+    function revealScratchCards() {
+      openButton.style.display = 'block';
+      timerDisplay.textContent = "🎉 It's Time! 🎉 Click the button below.";
+    }
+
+    openButton.addEventListener('click', () => {
+      window.location.href = 'day1.1.html';
+    });
+
+    function startTimer(duration) {
+      let remaining = duration;
+      const interval = setInterval(() => {
+        if (remaining <= 0) {
+          clearInterval(interval);
+          revealScratchCards();
+        } else {
+          timerDisplay.textContent = formatTime(remaining);
+          remaining--;
+        }
+      }, 1000);
+    }
+
+    const now = new Date();
+    const remainingSeconds = Math.floor((targetDate - now) / 1000);
+    if (remainingSeconds > 0) {
+      startTimer(remainingSeconds);
+    } else {
+      revealScratchCards();
+    }
+  </script>
+</body>
+</html>
