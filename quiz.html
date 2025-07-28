@@ -3,181 +3,281 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scratch Cards</title>
+  <title>Happy Birthday Ankita</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: black;
+      color: #ffffff;
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
-      height: 100vh;
-      background: linear-gradient(135deg, #ffebee, #ffcdd2);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .card {
-      width: 150px;
-      height: 200px;
-      background: #cfd8dc;
-      border: 2px solid #607d8b;
-      border-radius: 10px;
-      margin: 10px;
-      display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow: hidden;
+      text-align: center;
     }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
-    .hidden {
-      background: #607d8b;
-      color: transparent;
+
+    #moon {
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle at 30% 30%, #fefcd7, #e0dcc0 40%, #aaa68c 70%, #6e6b5a 90%);
+      border-radius: 50%;
+      box-shadow: 0 0 80px 30px #fffdd055;
+      animation: moonGlow 8s infinite alternate;
+      background-blend-mode: multiply;
+      z-index: 1; /* Ensure moon is behind the text */
     }
-    .open-button {
+
+    @keyframes moonGlow {
+      0% { box-shadow: 0 0 60px 20px #f5f3ce88; }
+      100% { box-shadow: 0 0 90px 35px #fffdd066; }
+    }
+
+    h1 {
+      margin-top: 180px; /* Increased margin to move text further down */
+      font-size: clamp(1.5rem, 6vw, 2.8rem);
+      background: linear-gradient(90deg, #f5f3ce, #eae6a4, #f5f3ce);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glowText 3s ease-in-out infinite alternate;
+      padding: 0 15px;
+      line-height: 1.3;
+      word-break: break-word;
+      z-index: 2; /* Ensure text is above the moon */
+      position: relative; /* Position relative to allow z-index to work */
+    }
+
+    @keyframes glowText {
+      from {
+        text-shadow: 0 0 10px #f5f3ce;
+      }
+      to {
+        text-shadow: 0 0 30px #fffdd0;
+      }
+    }
+
+    #timerDisplay {
+      font-size: 1.8rem;
       margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #e91e63;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
+      color: #ffe;
+      text-shadow: 0 0 10px #fffae5;
     }
-    .password-container {
+
+    #openButton {
+      margin: 20px auto; /* Reduced slightly to maintain spacing */
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #f5f3ce;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #fff2b2;
+      transition: background 0.3s;
+      display: none;
+    }
+
+    #openButton:hover {
+      background-color: #fffdd0;
+    }
+
+    #quizContainer {
       margin-top: 20px;
       display: none;
-      flex-direction: column;
-      align-items: center;
     }
-    .password-input {
-      padding: 10px;
+
+    #quizQuestion {
+      font-size: 1.5rem;
       margin-bottom: 10px;
-      font-size: 16px;
+    }
+
+    #answerInput {
+      padding: 10px;
+      font-size: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
-    .countdown {
-      font-size: 24px;
-      margin-bottom: 20px;
+
+    #submitAnswer {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #f5f3ce;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #submitAnswer:hover {
+      background-color: #fffdd0;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px;
+        justify-content: flex-start;
+      }
+
+      #moon {
+        width: 80px;
+        height: 80px;
+        top: 3%;
+        right: 3%;
+      }
+
+      h1 {
+        margin-top: 150px; /* Slightly less on mobile to prevent crowding */
+        font-size: clamp(1.5rem, 7vw, 2.2rem);
+        padding: 0 10px;
+        z-index: 2;
+        position: relative;
+      }
+
+      #timerDisplay {
+        font-size: 1.1rem;
+        margin-top: 15px;
+        padding: 0 10px;
+      }
+
+      #openButton {
+        padding: 12px 18px;
+        font-size: 15px;
+        margin: 25px auto;
+      }
+
+      canvas {
+        width: 100vw;
+        height: 100vh;
+      }
     }
   </style>
 </head>
 <body>
+  <canvas id="stars"></canvas>
+  <div id="moon"></div>
 
-<div class="countdown" id="countdown"></div>
-<div class="container" id="cardContainer"></div>
+  <h1>Happy Birthday Ankita </h1>
+  <div id="timerDisplay"></div>
+  <div id="quizContainer">
+    <div id="quizQuestion"></div>
+    <input type="text" id="answerInput" placeholder="Your answer..." />
+    <button id="submitAnswer">Submit Answer</button>
+  </div>
+  <button id="openButton">Open Your Scratch Card</button>
 
-<!-- Reset Section -->
-<button class="open-button" id="showResetBtn">Reset</button>
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
 
-<div class="password-container" id="resetPasswordContainer">
-  <input type="password" class="password-input" id="resetPasswordInput" placeholder="Enter Password to Reset">
-  <button class="open-button" id="confirmResetBtn">Reset Confirm</button>
-</div>
+    let stars = [];
+    const starCount = 150;
+    let width, height;
 
-<script>
-  const cardContainer = document.getElementById("cardContainer");
-  const countdownEl = document.getElementById("countdown");
-  const password = "04092002";
-
-  const showResetBtn = document.getElementById('showResetBtn');
-  const resetPasswordContainer = document.getElementById('resetPasswordContainer');
-  const resetPasswordInput = document.getElementById('resetPasswordInput');
-  const confirmResetBtn = document.getElementById('confirmResetBtn');
-
-  const scratchMessages = [
-    "🎉 Happy Birthday!",
-    "🎁 You won a surprise!",
-    "🎈 Have a joyful day!",
-    "🍰 Cake is waiting!",
-    "🎊 Celebration time!"
-  ];
-
-  let cards = [];
-
-  function createCards() {
-    cardContainer.innerHTML = "";
-    for (let i = 0; i < 5; i++) {
-      const card = document.createElement("div");
-      card.className = "card hidden";
-      card.dataset.index = i;
-      card.textContent = scratchMessages[i];
-      card.addEventListener("click", handleCardClick);
-      cards.push(card);
-      cardContainer.appendChild(card);
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      stars = [];
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.2,
+          twinkle: Math.random()
+        });
+      }
     }
 
-    const opened = localStorage.getItem("cardOpened");
-    if (opened !== null) {
-      cards.forEach((card, index) => {
-        if (index === parseInt(opened)) {
-          card.classList.remove("hidden");
-        } else {
-          card.style.pointerEvents = "none";
-          card.textContent = "❌";
+    function drawStars() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'white';
+      stars.forEach(star => {
+        ctx.globalAlpha = 0.5 + Math.sin(Date.now() * 0.002 + star.twinkle) * 0.5;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > height) {
+          star.y = 0;
+          star.x = Math.random() * width;
         }
       });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(drawStars);
     }
-  }
 
-  function handleCardClick(e) {
-    const opened = localStorage.getItem("cardOpened");
-    if (opened !== null) return;
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawStars();
 
-    const card = e.currentTarget;
-    const index = parseInt(card.dataset.index);
+    // Quiz logic
+    const questions = [
+      { question: "Who is the most beautiful girl in the world?", answer: "ankita" },
+      { question: "Name a girl who has the most beautiful eyes", answer: "ankita" }
+    ];
 
-    localStorage.setItem("cardOpened", index);
-    card.classList.remove("hidden");
+    let currentQuestionIndex = 0;
 
-    cards.forEach((c, i) => {
-      if (i !== index) {
-        c.style.pointerEvents = "none";
-        c.textContent = "❌";
-      }
-    });
-  }
+    const quizContainer = document.getElementById('quizContainer');
+    const quizQuestion = document.getElementById('quizQuestion');
+    const answerInput = document.getElementById('answerInput');
+    const submitAnswer = document.getElementById('submitAnswer');
 
-  function startCountdown() {
-    const targetDate = new Date();
-    targetDate.setSeconds(targetDate.getSeconds() + 10); // 10s for demo
-
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetDate.getTime() - now;
-
-      if (distance <= 0) {
-        clearInterval(interval);
-        countdownEl.textContent = "🎂 Start Scratching!";
-        createCards();
+    function showNextQuestion() {
+      if (currentQuestionIndex < questions.length) {
+        quizQuestion.textContent = questions[currentQuestionIndex].question;
+        answerInput.value = '';
       } else {
-        const seconds = Math.floor(distance / 1000);
-        countdownEl.textContent = `⏳ Scratch unlocks in: ${seconds}s`;
+        revealScratchCards();
       }
-    }, 1000);
-  }
+    }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    startCountdown();
-
-    showResetBtn.addEventListener('click', () => {
-      resetPasswordContainer.style.display = 'flex';
-    });
-
-    confirmResetBtn.addEventListener('click', () => {
-      if (resetPasswordInput.value === password) {
-        localStorage.removeItem('cardOpened');
-        location.reload(); // Reset state
+    submitAnswer.addEventListener('click', () => {
+      const userAnswer = answerInput.value.trim().toLowerCase();
+      if (userAnswer === questions[currentQuestionIndex].answer) {
+        currentQuestionIndex++;
+        showNextQuestion();
       } else {
-        alert("Incorrect password. Try again.");
+        alert("Incorrect answer. Try again!");
       }
     });
-  });
-</script>
+
+    function revealScratchCards() {
+      openButton.style.display = 'block';
+      quizContainer.style.display = 'none';
+      timerDisplay.textContent = "🎊 Happy Birthday Ankita! 🎊 Click below for your gift!";
+    }
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const openButton = document.getElementById('openButton');
+
+    openButton.addEventListener('click', () => {
+      window.location.href = 'har1.html';
+    });
+
+    // Start the quiz
+    quizContainer.style.display = 'block';
+    showNextQuestion();
+  </script>
 </body>
 </html>
