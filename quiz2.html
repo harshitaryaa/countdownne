@@ -99,37 +99,6 @@
       background-color: #fffdd0;
     }
 
-    #quizContainer {
-      margin-top: 20px;
-      display: none;
-    }
-
-    #quizQuestion {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-
-    #answerInput {
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    #submitAnswer {
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #f5f3ce;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    #submitAnswer:hover {
-      background-color: #fffdd0;
-    }
-
     @media (max-width: 600px) {
       body {
         padding: 20px;
@@ -174,13 +143,8 @@
   <canvas id="stars"></canvas>
   <div id="moon"></div>
 
-  <h1>Happy Birthday Ankita </h1>
+  <h1> Happy Birthday Ankita </h1>
   <div id="timerDisplay"></div>
-  <div id="quizContainer">
-    <div id="quizQuestion"></div>
-    <input type="text" id="answerInput" placeholder="Your answer..." />
-    <button id="submitAnswer">Submit Answer</button>
-  </div>
   <button id="openButton">Open Your Scratch Card</button>
 
   <script>
@@ -230,54 +194,48 @@
     resizeCanvas();
     drawStars();
 
-    // Quiz logic
-    const questions = [
-      { question: "Who is the most beautiful girl in the world?", answer: "ankita" },
-      { question: "Name a girl who has the most beautiful eyes", answer: "ankita" }
-    ];
-
-    let currentQuestionIndex = 0;
-
-    const quizContainer = document.getElementById('quizContainer');
-    const quizQuestion = document.getElementById('quizQuestion');
-    const answerInput = document.getElementById('answerInput');
-    const submitAnswer = document.getElementById('submitAnswer');
-
-    function showNextQuestion() {
-      if (currentQuestionIndex < questions.length) {
-        quizQuestion.textContent = questions[currentQuestionIndex].question;
-        answerInput.value = '';
-      } else {
-        revealScratchCards();
-      }
-    }
-
-    submitAnswer.addEventListener('click', () => {
-      const userAnswer = answerInput.value.trim().toLowerCase();
-      if (userAnswer === questions[currentQuestionIndex].answer) {
-        currentQuestionIndex++;
-        showNextQuestion();
-      } else {
-        alert("Incorrect answer. Try again!");
-      }
-    });
-
-    function revealScratchCards() {
-      openButton.style.display = 'block';
-      quizContainer.style.display = 'none';
-      timerDisplay.textContent = "🎊 Happy Birthday Ankita! 🎊 Click below for your gift!";
-    }
-
+    // Timer logic
+    const targetDate = new Date('2025-07-29T00:00:00');
     const timerDisplay = document.getElementById('timerDisplay');
     const openButton = document.getElementById('openButton');
 
+    function formatTime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${days}d ${hours}h ${minutes}m ${secs}s`;
+    }
+
+    function revealScratchCards() {
+      openButton.style.display = 'block';
+      timerDisplay.textContent = "🎉 It's Time! 🎉 Click the button below.";
+    }
+
     openButton.addEventListener('click', () => {
-      window.location.href = 'har1.html';
+      window.location.href = 'quiz2.html';
     });
 
-    // Start the quiz
-    quizContainer.style.display = 'block';
-    showNextQuestion();
+    function startTimer(duration) {
+      let remaining = duration;
+      const interval = setInterval(() => {
+        if (remaining <= 0) {
+          clearInterval(interval);
+          revealScratchCards();
+        } else {
+          timerDisplay.textContent = formatTime(remaining);
+          remaining--;
+        }
+      }, 1000);
+    }
+
+    const now = new Date();
+    const remainingSeconds = Math.floor((targetDate - now) / 1000);
+    if (remainingSeconds > 0) {
+      startTimer(remainingSeconds);
+    } else {
+      revealScratchCards();
+    }
   </script>
 </body>
 </html>
