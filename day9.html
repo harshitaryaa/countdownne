@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANKITA's Birthday Celebration!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #ffc5c5 0%, #a7c4ff 100%);
+            min-height: 100vh;
+        }
+        
+        .birthday-font {
+            font-family: 'Pacifico', cursive;
+        }
+        
+        .cake {
+            position: relative;
+            width: 300px;
+            height: 250px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .cake:hover {
+            transform: scale(1.05);
+        }
+        
+        .cake-base {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120px;
+            background: #f8d9d9;
+            border-radius: 15px 15px 0 0;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .cake-top {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: calc(100% - 40px);
+            height: 80px;
+            background: #ff8a8a;
+            border-radius: 10px;
+            box-shadow: inset -3px -3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .frosting {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 30px;
+            background: #fff;
+            border-radius: 15px;
+        }
+        
+        .candle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 50px;
+            background: linear-gradient(to bottom, #ffec9e 0%, #ffdf59 100%);
+            border-radius: 5px;
+            z-index: 10;
+        }
+        
+        .flame {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 30px;
+            background: linear-gradient(to bottom, #fff9c4 0%, #ffca28 50%, #ff7043 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px #ffeb3b, 0 0 60px #ff9800;
+            animation: flicker 1.5s infinite alternate;
+            z-index: 15;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flame.blown-out {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.5);
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+        }
+        
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25px;
+            width: 2px;
+            height: 30px;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .balloon.popped {
+            opacity: 0;
+            transform: scale(2);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            animation: fall 3s linear forwards;
+            z-index: 100;
+        }
+        
+        @keyframes flicker {
+            0%, 100% {
+                transform: translateX(-50%) scale(1) rotate(-2deg);
+            }
+            25% {
+                transform: translateX(-50%) scale(1.05) rotate(0deg);
+            }
+            50% {
+                transform: translateX(-50%) scale(0.95) rotate(2deg);
+            }
+            75% {
+                transform: translateX(-50%) scale(1.03) rotate(-1deg);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(5deg);
+            }
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .glitter {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: gold;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: glitter 1.5s linear infinite;
+            z-index: 20;
+        }
+        
+        @keyframes glitter {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+<body class="relative">
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="popSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-with-delay-2355.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="candleSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-candle-whoosh-2776.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="container mx-auto px-4 py-12 text-center">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 text-pink-600 birthday-font">Happy Birthday Ankita!</h1>
+        <p class="text-xl mb-8 text-gray-700">Click on the cake to start the celebration!</p>
+        
+        <div class="mb-12 space-x-4">
+            <button id="lightToggle" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full">
+                Turn On Lights
+            </button>
+            <button id="musicToggle" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full">
+                Play Music
+            </button>
+        </div>
+        
+        <div class="cake" id="cake">
+            <div class="cake-base"></div>
+            <div class="cake-top"></div>
+            <div class="frosting"></div>
+            <div class="candle hidden" id="candle">
+                <div class="flame hidden" id="flame"></div>
+            </div>
+            <div id="glitterContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+        </div>
+        
+        <div class="mt-8">
+            <button id="cutCakeBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg">
+                Cut the Cake
+            </button>
+        </div>
+        
+        <p id="celebrationText" class="text-2xl mt-12 font-bold invisible opacity-0 transition-all duration-500">Wishing you an amazing birthday!</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const musicToggle = document.getElementById('musicToggle');
+            const bgMusic = document.getElementById('bgMusic');
+            const cake = document.getElementById('cake');
+            const flame = document.getElementById('flame');
+            const cutCakeBtn = document.getElementById('cutCakeBtn');
+            const popSound = document.getElementById('popSound');
+            const candleSound = document.getElementById('candleSound');
+            const celebrationText = document.getElementById('celebrationText');
+            const glitterContainer = document.getElementById('glitterContainer');
+            
+            let musicPlaying = false;
+            let candlesLit = true;
+            
+            // Create balloons
+            function createBalloons() {
+                const colors = ['#ff5252', '#4caf50', '#2196f3', '#ffeb3b', '#9c27b0'];
+                for (let i = 0; i < 15; i++) {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.style.backgroundColor = colors[i % colors.length];
+                    balloon.style.left = `${Math.random() * 100}%`;
+                    balloon.style.top = `${window.innerHeight - 100}px`;
+                    balloon.style.animationDelay = `${Math.random() * 5}s`;
+                    balloon.style.transform = `scale(${0.8 + Math.random() * 0.5})`;
+                    
+                    balloon.addEventListener('click', function() {
+                        popSound.currentTime = 0;
+                        popSound.play();
+                        this.classList.add('popped');
+                        createConfetti(this.getBoundingClientRect().left, this.getBoundingClientRect().top);
+                        setTimeout(() => {
+                            document.body.removeChild(this);
+                        }, 500);
+                    });
+                    
+                    document.body.appendChild(balloon);
+                }
+            }
+            
+            // Create confetti
+            function createConfetti(x, y) {
+                const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = `${x}px`;
+                    confetti.style.top = `${y}px`;
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(confetti);
+                    }, 3000);
+                }
+            }
+            
+            // Create glitter effect
+            function createGlitter() {
+                glitterContainer.innerHTML = '';
+                
+                for (let i = 0; i < 50; i++) {
+                    const glitter = document.createElement('div');
+                    glitter.className = 'glitter';
+                    glitter.style.left = `${Math.random() * 300}px`;
+                    glitter.style.top = `${Math.random() * 300}px`;
+                    glitter.style.animationDelay = `${Math.random() * 2}s`;
+                    
+                    glitterContainer.appendChild(glitter);
+                }
+            }
+            
+            // Toggle music
+            musicToggle.addEventListener('click', function() {
+                if (musicPlaying) {
+                    bgMusic.pause();
+                    musicToggle.textContent = 'Play Music';
+                } else {
+                    bgMusic.play();
+                    musicToggle.textContent = 'Pause Music';
+                }
+                musicPlaying = !musicPlaying;
+            });
+            
+            // Cake interaction
+            cake.addEventListener('click', function() {
+                createGlitter();
+                
+                if (!candlesLit) {
+                    candleSound.currentTime = 0;
+                    candleSound.play();
+                    
+                    flame.classList.remove('blown-out');
+                    flame.style.opacity = '1';
+                    candlesLit = true;
+                } else {
+                    // Blow out candles!
+                    candleSound.currentTime = 0;
+                    candleSound.play();
+                    
+                    setTimeout(() => {
+                        flame.classList.add('blown-out');
+                    }, 100);
+                    
+                    setTimeout(() => {
+                        createConfetti(cake.getBoundingClientRect().left + cake.offsetWidth/2, 
+                                      cake.getBoundingClientRect().top);
+                        celebrationText.classList.remove('invisible', 'opacity-0');
+                    }, 500);
+                    
+                    candlesLit = false;
+                }
+            });
+            
+            // Cut cake
+            cutCakeBtn.addEventListener('click', function() {
+                if (!musicPlaying) {
+                    bgMusic.play();
+                    musicToggle.textContent = 'Pause Music';
+                    musicPlaying = true;
+                }
+                
+                // Big party pop
+                for(let i=0; i<10; i++) {
+                    setTimeout(() => {
+                        createConfetti(
+                            Math.random() * window.innerWidth,
+                            Math.random() * window.innerHeight
+                        );
+                    }, i * 200);
+                }
+                
+                // Pop balloons
+                document.querySelectorAll('.balloon').forEach(balloon => {
+                    setTimeout(() => {
+                        popSound.currentTime = 0;
+                        popSound.play();
+                        balloon.classList.add('popped');
+                        setTimeout(() => balloon.remove(), 500);
+                    }, Math.random() * 1000);
+                });
+                
+                celebrationText.textContent = "Happy Birthday ANKITA";
+                celebrationText.classList.remove('invisible', 'opacity-0');
+            });
+            
+            // Initialize animation sequence
+            const lightToggle = document.getElementById('lightToggle');
+            const candle = document.getElementById('candle');
+            let lightsOn = false;
+            
+            lightToggle.addEventListener('click', function() {
+                if (!lightsOn) {
+                    // Turn on lights
+                    document.body.style.background = 'linear-gradient(135deg, #ffc5c5 0%, #a7c4ff 100%)';
+                    this.textContent = 'Turn Off Lights';
+                    lightsOn = true;
+                    
+                    // Sequence starts
+                    setTimeout(() => {
+                        // Show candle
+                        candle.classList.remove('hidden');
+                        celebrationText.textContent = "Adding candles...";
+                        
+                        setTimeout(() => {
+                            // Light candle
+                            flame.classList.remove('hidden');
+                            celebrationText.textContent = "Lighting candles...";
+                            
+                            setTimeout(() => {
+                                createBalloons();
+                                celebrationText.textContent = "Balloons are coming!";
+                                
+                                setTimeout(() => {
+                                    // Show cake fully
+                                    cake.classList.remove('opacity-0');
+                                    celebrationText.textContent = "Make a wish and blow the candles!";
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 500);
+                    
+                } else {
+                    // Turn off lights
+                    document.body.style.background = '#111';
+                    this.textContent = 'Turn On Lights';
+                    lightsOn = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
