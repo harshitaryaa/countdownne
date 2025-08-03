@@ -100,7 +100,7 @@
         const birthdayDate = new Date('August 4, 2025');
         localStorage.setItem('countdownTarget', birthdayDate.getTime());
         const oneWeekBefore = new Date(birthdayDate);
-        oneWeekBefore.setDate(birthdayDate.getDate() - 7);
+        oneWeekBefore.setDate(birthdayDate.getDate() - 9);
 
         // Create buttons for each day from one week before to the birthday
         const messages = [
@@ -111,10 +111,13 @@
             "3 Days Until Your Special Day!",
             "2 Days to Celebrate!",
             "Tomorrow is the Big Day!",
-            "Happy Birthday, Ankita!"
+            "Happy Birthday, Ankita!",
+            "Cut the cake"
+            
+            
         ];
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 9; i++) {
             const buttonDate = new Date(oneWeekBefore);
             buttonDate.setDate(oneWeekBefore.getDate() + i);
             const button = document.createElement('div');
