@@ -1,473 +1,185 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch Cards</title>
-    <style>
-        /* Base styles for all devices */
-        :root {
-            --brand-color: #ff4081;
-            --light-pink: #ffebee;
-            --dark-pink: #f8bbd0;
-            --card-bg: #ff6b8b;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--light-pink) 0%, var(--dark-pink) 100%);
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            padding: 20px;
-            box-sizing: border-box; /* Ensures padding is included in height/width */
-            overflow-x: hidden; /* Prevents horizontal scroll */
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            color: var(--brand-color);
-            font-size: 2.5rem;
-            text-align: center;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .scratch-card-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            width: 100%;
-            max-width: 900px; /* Max width on large screens */
-            animation: slideIn 1s ease-in-out;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .scratch-card {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4 / 3; /* Maintain aspect ratio */
-            max-height: 250px; /* But don't get too tall */
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(255, 105, 140, 0.5);
-            text-align: center;
-            border: 5px solid var(--brand-color);
-            display: none;
-            transition: transform 0.2s ease;
-        }
-
-        .scratch-card:hover {
-            transform: scale(1.05);
-        }
-
-        .scratch-card canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .confetti {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .confetti div {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: var(--brand-color);
-            opacity: 0.8;
-            animation: fall 3s infinite linear;
-            border-radius: 50%;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(-100px) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
-        }
-
-        .timer {
-            font-size: 2rem;
-            color: var(--brand-color);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .password-container {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .password-input {
-            padding: 10px;
-            font-size: 1rem;
-            margin-right: 10px;
-            border: 1px solid var(--brand-color);
-            border-radius: 5px;
-        }
-
-        .open-button {
-            padding: 10px 20px;
-            background-color: var(--brand-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .open-button:hover {
-            background-color: #d81b60;
-        }
-
-        .message {
-            font-size: 1.5rem;
-            color: black;
-            margin-top: 20px;
-            display: none;
-            text-align: center;
-        }
-
-        .pick-one-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-
-        .pick-one-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .modal-content.active {
-            transform: scale(1);
-        }
-
-        .modal-title {
-            font-size: 1.8rem;
-            color: var(--brand-color);
-            margin-bottom: 20px;
-        }
-
-        /* --- Responsive Design for Smaller Screens (Mobiles) --- */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            .timer {
-                font-size: 1.5rem;
-            }
-            .scratch-card-container {
-                flex-direction: column; /* Stack cards vertically */
-                align-items: center;   /* Center them */
-                gap: 25px;
-            }
-            .scratch-card {
-                width: 80%; /* Use more screen width */
-                max-height: 200px;
-            }
-            .message {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scratch Cards</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffebee, #ffcdd2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      width: 150px;
+      height: 200px;
+      background: #cfd8dc;
+      border: 2px solid #607d8b;
+      border-radius: 10px;
+      margin: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .hidden {
+      background: #607d8b;
+      color: transparent;
+    }
+    .open-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .password-container {
+      margin-top: 20px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .password-input {
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .countdown {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Happy Birthday Ankita!</h1>
-    <div class="confetti">
-        <div style="left: 10%; animation-delay: 0s; background-color: #ff4081;"></div>
-        <div style="left: 20%; animation-delay: -0.5s; background-color: #ffeb3b;"></div>
-        <div style="left: 30%; animation-delay: -1s; background-color: #4caf50;"></div>
-        <div style="left: 40%; animation-delay: -1.5s; background-color: #2196f3;"></div>
-        <div style="left: 50%; animation-delay: -2s; background-color: #ff4081;"></div>
-        <div style="left: 60%; animation-delay: -2.5s; background-color: #ffeb3b;"></div>
-        <div style="left: 70%; animation-delay: -3s; background-color: #4caf50;"></div>
-        <div style="left: 80%; animation-delay: -3.5s; background-color: #2196f3;"></div>
-        <div style="left: 90%; animation-delay: -4s; background-color: #ff4081;"></div>
-    </div>
 
-    <div class="timer" id="timer">Calculating...</div>
-    <button class="open-button" id="openEarlyBtn">Open Early with Password</button>
+<div class="countdown" id="countdown"></div>
+<div class="container" id="cardContainer"></div>
 
-    <div class="password-container" id="passwordContainer">
-        <input type="password" class="password-input" id="passwordInput" placeholder="Enter Password">
-        <button class="open-button" id="submitPasswordBtn">Submit</button>
-    </div>
+<!-- Reset Section -->
+<button class="open-button" id="showResetBtn">Reset</button>
 
-    <div class="scratch-card-container">
-        <div class="scratch-card" data-message="better luck next time🎉🎂">
-            <canvas class="scratchCanvas"></canvas>
-        </div>
-        <div class="scratch-card" data-message="Earings ! 🎈">
-            <canvas class="scratchCanvas"></canvas>
-        </div>
-        <div class="scratch-card" data-message="wait for next day😂! 🎁">
-            <canvas class="scratchCanvas"></canvas>
-        </div>
-    </div>
+<div class="password-container" id="resetPasswordContainer">
+  <input type="password" class="password-input" id="resetPasswordInput" placeholder="Enter Password to Reset">
+  <button class="open-button" id="confirmResetBtn">Reset Confirm</button>
+</div>
 
-    <div class="message" id="messageDisplay"></div>
-    
-    <div class="pick-one-modal" id="pickOneModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Pick One!</h3>
-            <p style="margin-bottom: 20px;font-size: 1.3rem;color:#ff4081">Pick one card - it's your gift!</p>
-            <button class="open-button" id="confirmPickBtn">Confirm</button>
-        </div>
-    </div>
+<script>
+  const cardContainer = document.getElementById("cardContainer");
+  const countdownEl = document.getElementById("countdown");
+  const password = "04092002";
 
-    <script>
-        // --- JAVASCRIPT LOGIC IS 100% UNCHANGED FROM YOUR WORKING VERSION ---
-        const scratchCards = document.querySelectorAll('.scratch-card');
-        const timerDisplay = document.getElementById('timer');
-        const openEarlyBtn = document.getElementById('openEarlyBtn');
-        const passwordContainer = document.getElementById('passwordContainer');
-        const passwordInput = document.getElementById('passwordInput');
-        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
-        const password = "04092002";
-        const messageDisplay = document.getElementById('messageDisplay');
-        const pickOneModal = document.getElementById('pickOneModal');
-        const confirmPickBtn = document.getElementById('confirmPickBtn');
-        let countdown;
-        let selectedCard = null;
+  const showResetBtn = document.getElementById('showResetBtn');
+  const resetPasswordContainer = document.getElementById('resetPasswordContainer');
+  const resetPasswordInput = document.getElementById('resetPasswordInput');
+  const confirmResetBtn = document.getElementById('confirmResetBtn');
 
-        const targetDate = new Date('2025-08-02T00:00:00');
-        
-        function updateTimer() {
-            const now = new Date();
-            const remainingSeconds = Math.floor((targetDate - now) / 1000);
-            if (remainingSeconds > 0) {
-                if (!countdown) startTimer(remainingSeconds);
-                timerDisplay.textContent = formatTime(remainingSeconds);
-            } else {
-                revealScratchCards();
-                if (countdown) clearInterval(countdown);
-            }
+  const scratchMessages = [
+    " BANGLES",
+    " TRY AGAIN",
+    " MAKE UP KIT",
+    " NEXT TIME",
+    "🎊 OOPS!"
+  ];
+
+  let cards = [];
+
+  function createCards() {
+    cardContainer.innerHTML = "";
+    for (let i = 0; i < 5; i++) {
+      const card = document.createElement("div");
+      card.className = "card hidden";
+      card.dataset.index = i;
+      card.textContent = scratchMessages[i];
+      card.addEventListener("click", handleCardClick);
+      cards.push(card);
+      cardContainer.appendChild(card);
+    }
+
+    const opened = localStorage.getItem("cardOpened");
+    if (opened !== null) {
+      cards.forEach((card, index) => {
+        if (index === parseInt(opened)) {
+          card.classList.remove("hidden");
+        } else {
+          card.style.pointerEvents = "none";
+          card.textContent = "❌";
         }
-        function formatTime(seconds) {
-            const days = Math.floor(seconds / (24 * 3600));
-            seconds %= 24 * 3600;
-            const hours = Math.floor(seconds / 3600);
-            seconds %= 3600;
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
-        }
-        function startTimer(totalSeconds) {
-            countdown = setInterval(() => {
-                totalSeconds--;
-                if (totalSeconds <= 0) {
-                    clearInterval(countdown);
-                    revealScratchCards();
-                } else {
-                    timerDisplay.textContent = formatTime(totalSeconds);
-                }
-            }, 1000);
-        }
-        updateTimer();
+      });
+    }
+  }
 
-        function revealScratchCards() {
-            timerDisplay.style.display = 'none';
-            openEarlyBtn.style.display = 'none';
-            passwordContainer.style.display = 'none';
-            
-            scratchCards.forEach(card => card.style.display = 'block');
-            
-            requestAnimationFrame(() => {
-                scratchCards.forEach(setupInitialCanvas);
-            });
-        }
+  function handleCardClick(e) {
+    const opened = localStorage.getItem("cardOpened");
+    if (opened !== null) return;
 
-        openEarlyBtn.addEventListener('click', () => {
-            passwordContainer.style.display = 'block';
-        });
+    const card = e.currentTarget;
+    const index = parseInt(card.dataset.index);
 
-        submitPasswordBtn.addEventListener('click', () => {
-            if (passwordInput.value === password) {
-                if (countdown) clearInterval(countdown);
-                revealScratchCards();
-            } else {
-                alert('Incorrect password. Please try again.');
-            }
-        });
+    localStorage.setItem("cardOpened", index);
+    card.classList.remove("hidden");
 
-        function setupInitialCanvas(card) {
-            const canvas = card.querySelector('.scratchCanvas');
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.getBoundingClientRect();
-            
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+    cards.forEach((c, i) => {
+      if (i !== index) {
+        c.style.pointerEvents = "none";
+        c.textContent = "❌";
+      }
+    });
+  }
 
-            ctx.fillStyle = '#ff4081';
-            const patternCanvas = document.createElement('canvas');
-            const patternCtx = patternCanvas.getContext('2d');
-            patternCanvas.width = 10;
-            patternCanvas.height = 10;
-            patternCtx.strokeStyle = '#ff4081';
-            patternCtx.lineWidth = 2;
-            patternCtx.beginPath();
-            patternCtx.moveTo(0, 10);
-            patternCtx.lineTo(10, 0);
-            patternCtx.moveTo(10, 10);
-            patternCtx.lineTo(0, 0);
-            patternCtx.stroke();
-            const pattern = ctx.createPattern(patternCanvas, 'repeat');
-            ctx.fillStyle = pattern;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+  function startCountdown() {
+    const targetDate = new Date();
+    targetDate.setSeconds(targetDate.getSeconds() + 10); // 10s for demo
 
-        scratchCards.forEach(card => {
-            const canvas = card.querySelector('.scratchCanvas');
-            let isDrawing = false;
-            
-            function getPointerPosition(e) {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
-            }
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
 
-            function startScratch(e) {
-                e.preventDefault();
-                if (!selectedCard) {
-                    showModal();
-                    selectedCard = card;
-                    return;
-                }
-                if (card === selectedCard) {
-                    isDrawing = true;
-                    scratch(e);
-                }
-            }
+      if (distance <= 0) {
+        clearInterval(interval);
+        countdownEl.textContent = "🎂 Start Scratching!";
+        createCards();
+      } else {
+        const seconds = Math.floor(distance / 1000);
+        countdownEl.textContent = `⏳ Scratch unlocks in: ${seconds}s`;
+      }
+    }, 1000);
+  }
 
-            function endScratch(e) {
-                if (!isDrawing) return;
-                isDrawing = false;
-                canvas.getContext('2d').beginPath();
-                checkForReveal(card);
-            }
+  document.addEventListener("DOMContentLoaded", function () {
+    startCountdown();
 
-            function scratch(e) {
-                if (!isDrawing) return;
-                const ctx = canvas.getContext('2d');
-                const pos = getPointerPosition(e);
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2, false);
-                ctx.fill();
-            }
-            
-            canvas.addEventListener('mousedown', startScratch);
-            canvas.addEventListener('mouseup', endScratch);
-            canvas.addEventListener('mousemove', scratch);
-            canvas.addEventListener('touchstart', startScratch, { passive: false });
-            canvas.addEventListener('touchend', endScratch);
-            canvas.addEventListener('touchmove', scratch, { passive: false });
-        });
+    showResetBtn.addEventListener('click', () => {
+      resetPasswordContainer.style.display = 'flex';
+    });
 
-        function checkForReveal(card) {
-            const canvas = card.querySelector('.scratchCanvas');
-            const ctx = canvas.getContext('2d');
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const pixels = imageData.data;
-            let transparentPixels = 0;
-            for (let i = 3; i < pixels.length; i += 4) {
-                if (pixels[i] === 0) transparentPixels++;
-            }
-            if ((transparentPixels / (canvas.width * canvas.height)) > 0.6) {
-                revealMessage(card);
-            }
-        }
-        
-        function revealMessage(card) {
-            scratchCards.forEach(c => {
-                if (c !== card) c.style.display = 'none';
-            });
-            
-            const canvas = card.querySelector('.scratchCanvas');
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            const message = card.getAttribute('data-message');
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ff6b8b';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            const lines = message.split('\n');
-            const fontSize = Math.min(canvas.height / 4, canvas.width / 10);
-            ctx.font = `bold ${fontSize}px Poppins`;
-            const lineHeight = fontSize * 1.2;
-            const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
-
-            lines.forEach((line, i) => {
-                ctx.fillText(line.trim(), canvas.width / 2, startY + (i * lineHeight));
-            });
-
-            messageDisplay.textContent = message.replace('\n', ' ');
-            messageDisplay.style.display = 'block';
-        }
-
-        function showModal() {
-            pickOneModal.classList.add('active');
-            pickOneModal.querySelector('.modal-content').classList.add('active');
-        }
-
-        confirmPickBtn.addEventListener('click', () => {
-            pickOneModal.classList.remove('active');
-            pickOneModal.querySelector('.modal-content').classList.remove('active');
-        });
-    </script>
+    confirmResetBtn.addEventListener('click', () => {
+      if (resetPasswordInput.value === password) {
+        localStorage.removeItem('cardOpened');
+        location.reload(); // Reset state
+      } else {
+        alert("Incorrect password. Try again.");
+      }
+    });
+  });
+</script>
 </body>
 </html>
+
